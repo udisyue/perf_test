@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>更新接口</title>
+    <script type="text/javascript" src="static/My97DatePicker/WdatePicker.js"></script>
+    <!-- bootstrap -->
+    <link rel="stylesheet" type="text/css" href="static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="static/css/base.css">
+    <script src="static/jquery/jquery.js"></script>
+    <script src="static/bootstrap/js/bootstrap.min.js"></script>
+</head>
+<style type="text/css">
+
+#showResult { width:100%; height:500px;}
+
+.query_table { width100%;}
+.query_table tr th { padding:5px; text-align:right; }
+.query_table tr td { padding:5px; }
+.query_table input {width:80px;}
+
+.query_title { 
+    text-align:left; 
+	padding:10px; 
+	font-size:20px; 
+	font-weigh:blod; 
+}
+
+.cities { background-color:Honeydew;border:1px solid red;}
+
+</style>
+
+<body>
+
+<nav class="navbar navbar-default navbar-static-top" role="navigation">
+<div class="navbar-header">
+  <!--a class="navbar-brand" style="line-height: 20px">价格服务详情页查询接口</a-->
+  <a class="navbar-brand" href="#">价格服务--缓存更新接口</a>
+</div>
+</nav>
+<div id="main-container"  style="padding-left:15px;padding-right:15px;">
+
+    <form id="queryformdata" action="" method="post" class="form-inline" role="form">
+    <div class="cities">
+            <div id="result">			
+				<table class="query_table">
+				    <!--Server-->
+				    <div><br/>&nbsp;&nbsp;&nbsp;<b>&nbsp;IP：&nbsp;&nbsp;</b>
+					    <input type="text" name="IP" value="192.168.14.170" />
+						&nbsp;&nbsp;&nbsp;<b>&nbsp;Port：&nbsp;&nbsp;</b>
+						<input type="text" name="Port" value="6300" />&nbsp;&nbsp;&nbsp;
+                        <button type="submit" class="form-control" style="background:red;color:white">Search</button>
+					</div>	
+                    <!--list_req-->	
+					<tr>
+						<th>hotel_id：</th>
+						<td><input type="text" name="hotelId" value="324748" /></td>
+						<th>ota_id：</th>
+						<td><input type="text" name="otaId" value=2 /></td>
+						<th>checkin：</th>
+						<td><input type="text" name="checkIn" onclick="WdatePicker()" value="2016-12-12" /></td>
+						<th>checkout：</th>
+						<td><input type="text" name="checkOut" onclick="WdatePicker()" value="2016-12-13" /></td>
+						<th>booking_channel：</th>
+						<td><input type="text" name="bookingChannel" value="2" /></td>
+					</tr>
+					<tr>
+						<th>adult_num：</th>
+						<td><input type="text" name="audultNum" value="2" /></td>
+						<th>children：</th>
+						<td><input type="text" name="childAges" value="" /></td>
+						<th>search_id：</th>
+						<td><input type="text" name="searchId" value="3159315316254" /></td>
+						<th>list_only：</th>
+						<td><select name="listOnly" style="width:50px;height:20px"> 
+                          <option value="0">no</option> 
+                          <option value="1">yes</option>
+                          </select></td>
+						<th>hotel_status：</th>
+						<td><input type="text" name="hotelStatus" value=2 /></td>
+					</tr>
+					<!--room1 begin-->
+					<tr>
+                        <th>room_1：</th>
+					    <td><select name="room1" style="width:50px;height:20px"> 
+                          <option value="0">off</option> 
+                          <option value="1">on</option>
+                          </select></td>				
+						<th>room_id_1：</th>
+						<td><input type="text" name="roomId1" value=123 /></td>
+						<th>room_name_1：</th>
+						<td><input type="text" name="roomNameCn1" value="大床房" /></td>
+						<th>room_status_1：</th>
+						<td><input type="text" name="roomStatus1" value=123 /></td>
+						<th></th><td></td>
+						<th></th><td></td>
+					</tr>
+					<tr>
+                        <th>product11：</th>
+					    <td><select name="product11" style="width:50px;height:20px"> 
+                          <option value="0">off</option> 
+                          <option value="1">on</option>
+                          </select></td>				
+						<th>elong_pid_11：</th>
+						<td><input type="text" name="elongPid11" value="0" /></td>
+						<th>product_name_11：</th>
+						<td><input type="text" name="productNameCn11" value="" /></td>
+						<th>cashpay_11：</th>
+						<td><select name="cashPay11" style="width:50px;height:20px"> 
+                          <option value="0">no</option> 
+                          <option value="1">yes</option>
+                          </select></td>
+						<th>mobile_11：</th>
+						<td><select name="mobile11" style="width:50px;height:20px"> 
+                          <option value="0">no</option> 
+                          <option value="1">yes</option>
+                          </select></td>
+						<th>pr1_11：</th>
+						<td><input type="text" name="averRoomPrice11" value="0" /></td>
+						<th>pr2_11：</th>
+						<td><input type="text" name="averPrice11" value="0" /></td>
+					</tr>
+					<tr>
+                        <th>product12：</th>
+					    <td><select name="product12" style="width:50px;height:20px"> 
+                          <option value="0">off</option> 
+                          <option value="1">on</option>
+                          </select></td>				
+						<th>elong_pid_12：</th>
+						<td><input type="text" name="elongPid12" value="0" /></td>
+						<th>product_name_12：</th>
+						<td><input type="text" name="productNameCn12" value="" /></td>
+						<th>cashpay_12：</th>
+						<td><select name="cashPay12" style="width:50px;height:20px"> 
+                          <option value="0">no</option> 
+                          <option value="1">yes</option>
+                          </select></td>
+						<th>mobile_12：</th>
+						<td><select name="mobile12" style="width:50px;height:20px"> 
+                          <option value="0">no</option> 
+                          <option value="1">yes</option>
+                          </select></td>
+						<th>pr1_12：</th>
+						<td><input type="text" name="averRoomPrice12" value="0" /></td>
+						<th>pr2_12：</th>
+						<td><input type="text" name="averPrice12" value="0" /></td>
+					</tr>
+					<!--room1 end-->
+					<!--room2 begin-->
+					<tr>
+                        <th>room_2：</th>
+					    <td><select name="room2" style="width:50px;height:20px"> 
+                          <option value="0">off</option> 
+                          <option value="1">on</option>
+                          </select></td>				
+						<th>room_id_2：</th>
+						<td><input type="text" name="roomId2" value=123 /></td>
+						<th>room_name_2：</th>
+						<td><input type="text" name="roomNameCn2" value="大床房" /></td>
+						<th>room_status_2：</th>
+						<td><input type="text" name="roomStatus2" value=123 /></td>
+						<th></th><td></td>
+						<th></th><td></td>
+					</tr>
+					<tr>
+                        <th>product21：</th>
+					    <td><select name="product21" style="width:50px;height:20px"> 
+                          <option value="0">off</option> 
+                          <option value="1">on</option>
+                          </select></td>					
+						<th>elong_pid_21：</th>
+						<td><input type="text" name="elongPid21" value="0" /></td>
+						<th>product_name_21：</th>
+						<td><input type="text" name="productNameCn21" value="" /></td>
+						<th>cashpay_21：</th>
+						<td><select name="cashPay21" style="width:50px;height:20px"> 
+                          <option value="0">no</option> 
+                          <option value="1">yes</option>
+                          </select></td>
+						<th>mobile_21：</th>
+						<td><select name="mobile21" style="width:50px;height:20px"> 
+                          <option value="0">no</option> 
+                          <option value="1">yes</option>
+                          </select></td>
+						<th>pr1_21：</th>
+						<td><input type="text" name="averRoomPrice21" value="0" /></td>
+						<th>pr2_21：</th>
+						<td><input type="text" name="averPrice21" value="0" /></td>
+					</tr>
+					<tr>
+                        <th>product22：</th>
+					    <td><select name="product22" style="width:50px;height:20px"> 
+                          <option value="0">off</option> 
+                          <option value="1">on</option>
+						<th>elong_pid_22：</th>
+						<td><input type="text" name="elongPid22" value="0" /></td>
+						<th>product_name_22：</th>
+						<td><input type="text" name="productNameCn22" value="" /></td>
+						<th>cashpay_22：</th>
+						<td><select name="cashPay22" style="width:50px;height:20px"> 
+                          <option value="0">no</option> 
+                          <option value="1">yes</option>
+                          </select></td>
+						<th>mobile_22：</th>
+						<td><select name="mobile22" style="width:50px;height:20px"> 
+                          <option value="0">no</option> 
+                          <option value="1">yes</option>
+                          </select></td>
+						<th>pr1_22：</th>
+						<td><input type="text" name="averRoomPrice22" value="0" /></td>
+						<th>pr2_22：</th>
+						<td><input type="text" name="averPrice22" value="0" /></td>
+					</tr>
+					<!--room2 end-->
+				</table>
+            </div>
+        </div>
+        <hr />
+        <!--detail_response begin-->
+        <div>          
+        {% if result %}
+			<div class="query_title">UpdateResponse</div> 
+		    <div>search_id:{{result.search_id}}</div>
+            <div>service_status:{{result.service_status}}</div>
+		    </table>
+		{% endif %}
+    </form>
+    </div>
+</div>
+</body>
+</html>

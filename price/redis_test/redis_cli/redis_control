@@ -1,0 +1,81 @@
+#!/bin/bash
+
+
+PROG="redis-server"
+bin_dir=`pwd`
+ROOT=${bin_dir%/*}
+conf="redis.conf"
+pidfile="redis.pid"
+logfile="redis.log"
+
+
+function get_port() {
+    port=`cat $ROOT/conf/${conf}|grep -E ^port|awk '{print $2}'`
+    echo $port
+}
+
+
+function get_pid() {
+    port=$(get_port)
+    pid=`ps -aefw|grep -v grep|grep "$PROG \*:$port"|awk '{print $2}'`
+    echo $pid
+}
+
+
+function modify_redis_conf() {
+    change="logfile pidfile dir"
+    logfile_path=$ROOT/log/$logfile
+    pidfile_path=$ROOT/status/$pidfile
+    dir_path=$ROOT/data/
+
+    for item in $change
+    do
+      eval c='$'${item}_path
+      tmp=`cat $ROOT/conf/$conf|grep -E ^${item}|awk '{print $2}'`
+      if [ $tmp != $c ];then
+          echo "$item in config changed to $c"
+          sed -i "/^${item}/s#${tmp}#$c#" $ROOT/conf/$conf
+      fi
+    done
+    
+}
+
+
+
+function redis_start() {
+    pid=$(get_pid)
+    if [ -z $pid ];then
+        echo "$PROG starting..."
+        #modify_redis_conf
+        cd $ROOT && bin/$PROG $ROOT/conf/$conf
+    else
+        echo "$PROG is running..."
+        echo $pid > ${ROOT}/status/${pidfile}
+    fi
+}
+
+
+function redis_stop() {
+    pid=$(get_pid)
+    if [ -z $pid ];then
+        echo "$PROG is not running..."
+    else
+        echo "stop $PROG..."
+        kill $pid
+    fi
+
+}
+
+
+
+case "$1" in
+    start)
+        redis_start
+        ;;
+    stop)
+        redis_stop
+        ;;
+    *)
+        echo "Usage: redis_control start|stop"
+        ;;
+esac

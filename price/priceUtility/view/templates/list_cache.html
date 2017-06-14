@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>价格缓存查询</title>
+    <script type="text/javascript" src="static/My97DatePicker/WdatePicker.js"></script>
+    <!-- bootstrap -->
+    <link rel="stylesheet" type="text/css" href="static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="static/css/base.css">
+    <script src="static/jquery/jquery.js"></script>
+    <script src="static/bootstrap/js/bootstrap.min.js"></script>
+</head>
+<style type="text/css">
+
+.query_table { width100%;}
+.query_table tr th { padding:10px; text-align:center; }
+.query_table tr td { padding:10px; }
+
+.result_table { width:80%; height:50px;bolder-collapse:collapse;}
+.result_table th td { bolder:3 solid;}
+.heading{background-color:#BEBEBE;}
+.odd {background-color:#F0F0F0;}
+.even{background-color:#FFFFFF;}
+
+.query_title { 
+    text-align:left; 
+	padding:10px; 
+	font-size:20px; 
+	font-weigh:blod; 
+}
+
+.cities { background-color:Honeydew;border:1px solid red;}
+
+</style>
+
+<body>
+
+<nav class="navbar navbar-default navbar-static-top" role="navigation">
+<div class="navbar-header">
+  <a class="navbar-brand" href="#">价格服务-价格缓存查询</a>
+</div>
+</nav>
+<div id="main-container" style="padding-left:15px;padding-right:15px;">
+
+    <form id="queryformdata" action="" method="post" class="form-inline" role="form">
+    <div class="cities" >
+            <div id="result">	
+				<!--Server-->
+				<div><br/><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;redis-cluster：&nbsp;&nbsp;</b>
+				<select name="redis" style="width:300px;height:20px"> 
+                    {% if req.redis == "0" %}
+                      <option value="0" selected="selected">off-line [test]</option> 
+                      <option value="1">on-line</option>
+				      <option value="2">off-line [development]</option>
+                    {% elif req.redis == "1" %}
+					  <option value="0">off-line [test]</option> 
+                      <option value="1" selected="selected">on-line</option>
+				      <option value="2">off-line [development]</option>
+					{% else %}
+					  <option value="0">off-line [test]</option> 
+                      <option value="1">on-line</option>
+				      <option value="2" selected="selected">off-line [development]</option>
+					{% endif %}
+                </select> 
+				</div><br/>
+				<table class="query_table" style="with:100%">
+					<tr>
+						<th>ver：</th>
+						<td><input type="text" name="version" value={{req.ver}} /></td>
+						<th>hotel_id：</th>
+						<td><input type="text" name="hotelId" value={{req.hotel_id}} /></td>
+						<th>checkin：</th>
+						<td><input type="text" name="checkIn" value={{req.checkin}} /></td>
+					    <th>checkout：</th>
+						<td><input type="text" name="checkOut" value={{req.checkout}} /></td>
+					<tr>
+					</tr>
+					    <th>adult_num：</th>
+						<td><input type="text" name="audultNum" value={{req.adult_num}} /></td>
+						<th>children：</th>
+						<td><input type="text" name="childAges" value={{req.children}} /></td>
+						<th></th>
+						<td><button type="submit" class="form-control" style="background:red;color:white">Search</button></td>
+						<th></th>
+						<td></td>
+						<!--<th>bc：</th>
+						<td><input type="text" name="bookingChannel" value={{req.bc}} /></td>
+						<th>cl：</th>
+						<td><input type="text" name="customerLevel" value={{req.cl}} /></td>
+						<th>of：</th>
+						<td><input type="text" name="orderFrom" value={{req.of}} /></td>-->
+					<tr>			   
+				</table>
+            </div>
+        </div>
+		<hr />
+		<!--get key-->
+		{% if result %}
+        <div class="query_title">Key</div>
+		<textarea style="width:40%; height:30px;">{{result.key}}</textarea>
+		<hr />
+		<!--get cacheValue-->
+        <div class="query_title">ListCache</div>
+		{% if result.hotel_price %}
+		<table class="result_table" border="3">
+		    <tr class="heading">
+		      <th>ota_id</th>
+			  <th>cashpay</th>
+			  <th>mobile</th>
+			  <th>cost_price</th>
+			  <th>room_price</th>
+			  <th>total_price</th>
+			  <!--<th>timestamp</th>-->
+			  <th>timeformat</th>
+			</tr>
+			{% for a_ota in result.hotel_price %}
+			{% if loop.index % 2 == 0 %}
+			<tr class="odd">
+			    <td width="50">{{a_ota.id}}</td>
+				<td width="50">{{a_ota.cashpay}}</td>
+				<td width="50">{{a_ota.mobile}}</td>
+				<td width="50">{{a_ota.cost_price}}</td>
+				<td width="50">{{a_ota.room_price}}</td>
+				<td width="50">{{a_ota.total_price}}</td>
+				<!--<td width="50">{{a_ota.timestamp}}</td>-->
+				<td width="80">{{a_ota.timeformat}}</td>
+			</tr>
+			{% else %}
+			<tr class="even">
+			    <td width="50">{{a_ota.id}}</td>
+				<td width="50">{{a_ota.cashpay}}</td>
+				<td width="50">{{a_ota.mobile}}</td>
+				<td width="50">{{a_ota.cost_price}}</td>
+				<td width="50">{{a_ota.room_price}}</td>
+				<td width="50">{{a_ota.total_price}}</td>
+				<!--<td width="50">{{a_ota.timestamp}}</td>-->
+				<td width="80">{{a_ota.timeformat}}</td>
+			</tr>
+			{% endif %}
+			{% endfor %}
+		</table>
+	   {% endif %}
+	  {% endif %}
+    </form>
+    </div>
+</div>
+</body>
+</html>

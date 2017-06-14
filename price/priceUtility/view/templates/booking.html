@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>订单页</title>
+    <script type="text/javascript" src="static/My97DatePicker/WdatePicker.js"></script>
+    <!-- bootstrap -->
+    <link rel="stylesheet" type="text/css" href="static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="static/css/base.css">
+    <script src="static/jquery/jquery.js"></script>
+    <script src="static/bootstrap/js/bootstrap.min.js"></script>
+</head>
+<style type="text/css">
+
+#showResult { width:100%; height:500px;}
+
+.query_table { width100%;}
+.query_table tr th { padding:10px; text-align:center; }
+.query_table tr td { padding:10px; }
+
+.result_table { width:100%; height:50px;bolder-collapse:collapse;}
+<!--.result_table th,td { bolder:3 solid;text-align:left;}
+.heading{background-color:#BEBEBE;}
+.odd {background-color:#F0F0F0;}
+.even{background-color:#FFFFFF;}-->
+
+.query_title { 
+    text-align:left; 
+	padding:10px; 
+	font-size:20px; 
+	font-weigh:blod; 
+}
+
+.cities { background-color:Honeydew;border:1px solid red;}
+
+</style>
+
+<body>
+
+<nav class="navbar navbar-default navbar-static-top" role="navigation">
+<div class="navbar-header">
+  <!--a class="navbar-brand" style="line-height: 20px">价格服务订单页查询接口</a-->
+  <a class="navbar-brand" href="#">价格服务--订单页查询接口</a>
+</div>
+</nav>
+<div id="main-container" style="padding-left:15px;padding-right:15px;">
+
+    <form id="queryformdata" action="" method="post" class="form-inline" role="form">
+    <div class="cities">
+            <div id="result">			
+				<!--Server-->
+				<table class="query_table" style="with:100%">
+					<tr>
+						<th>IP：</th>
+						<td><input type="text" name="IP" value={{req.ip}} /></td>
+						<th>Port：</th>
+						<td><input type="text" name="Port" value={{req.port}} /></td>
+						<th>show_type：</th>
+						<td><select name="showType">
+						   {% if req.show_type == "0" %}
+                             <option value="0" selected="selected">表格</option> 
+                             <option value="1">文本</option></select></td>
+						   {% else %}
+						     <option value="0">表格</option> 
+                             <option value="1" selected="selected">文本</option></select></td>
+						   {% endif %}
+						<th><button type="submit" class="form-control" style="background:red;color:white">Search</button></th>
+						<td></td>
+					</tr>
+				
+				<!--booking_req-->
+					<tr>
+						<th>hotel_id：</th>
+						<td><input type="text" name="hotelId" value={{req.hotel_id}} /></td>
+						<th>room_num：</th>
+						<td><input type="text" name="roomNum" value={{req.room_num}} /></td>
+						<th>checkin：</th>
+						<td><input type="text" name="checkIn" onclick="WdatePicker()" value={{req.checkin}} /></td>
+						<th>checkout：</th>
+						<td><input type="text" name="checkOut" onclick="WdatePicker()" value={{req.checkout}} /></td>
+					</tr>
+					<tr>
+						<th>adult_num：</th>
+						<td><input type="text" name="audultNum" value={{req.adult_num}} /></td>
+						<th>children：</th>
+						{% if req.children != "" %}
+						<td><input type="text" name="childAges" value={{req.children}} /></td>
+						{% else %}
+						<td><input type="text" name="childAges" value="" /></td>
+						{% endif %}
+						<th>otaid：</th>
+						<td><input type="text" name="otaId" value={{req.otaid}} /></td>
+						<th>source_otaid：</th>
+						<td><input type="text" name="srcOtaId" value={{req.src_otaid}} /></td>
+						<th></th>
+						<td></td>
+					</tr>
+					<tr>
+					    <th>search_id：</th>
+						<td><input type="text" name="searchId" value={{req.search_id}} /></td>
+						<th>elong_pid：</th>
+						<td><input type="text" name="elongPid" value={{req.elong_pid}} /></td>
+						<th>ota_sign：</th>
+						<td><input type="text" name="otaSign" value={{req.ota_sign}} /></td>
+                        <th>elong_pname：</th>
+						<td><input type="text" name="elongPname" value={{req.elong_pname}} /></td>
+					</tr>
+					<!--user_info-->
+					<tr>					
+						<th>order_from：</th>
+						<td><input type="text" name="orderFrom" value={{req.order_from}} /></td>
+						<th>customer_level：</th>
+						<td><input type="text" name="customerLevel" value={{req.customer_level}} /></td>
+						<th>booking_channel：</th>
+						<td><input type="text" name="bookingChannel" value={{req.booking_channel}} /></td>
+						<th>user_id：</th>
+						{% if req.user_id != "" %}
+						    <td><input type="text" name="userId" value={{req.user_id}} /></td>
+						{% else %}
+						    <td><input type="text" name="userId" value="" /></td>
+						{% endif %}
+					</tr>
+				</table>
+            </div>
+        </div>
+        <hr />
+        <!--booking_response begin-->
+        <div>          
+        {% if result %}
+		{% if req.show_type == "0" %}
+		  {% if result.booking_response %}
+		    <div class="query_title">BookingResponse</div><hr/>
+			<!--1 general info-->
+			<div style="font-size:20px;color:blue;">► general</div>
+            <table class="result_table"  border="3">
+			<tr class="heading">
+			<th>search_id</th>
+			<th>service_status</th>
+			<th>region_promotion</th>
+			</tr>
+		    <tr>
+			<td >{{result.search_id}}</td>
+            <td >{{result.service_status}}</td>
+            <td >{{result.booking_response.region_promotion_info}}</td>
+			</tr>
+		    </table>
+			<hr/>
+			<!--2 hotel info-->           
+			{% if result.booking_response.detail_hotel %}
+			<div style="font-size:20px;color:blue;">► hotelInfo</div>
+			<table class="result_table"  border="3">
+		    <tr class="heading">
+			<th>hotel_id</th>
+			<th>crawl_time</th>
+			<th>promotion_info</th>
+			<!--<th>product_filter_stat</th>-->
+			<th>base_price</th>
+			<!--<th>tag</th>-->
+			</tr>
+			<tr>
+			<td>{{result.booking_response.detail_hotel.base_hotel_id}}</td>
+            <td>{{result.booking_response.detail_hotel.crawl_time}}</td>
+            <td>{{result.booking_response.detail_hotel.promotion_info}}</td>
+            <!--<td>{{result.booking_response.detail_hotel.product_filter_stat}}</td>-->
+            {% if result.booking_response.detail_hotel.base_price %}
+			<td>{{result.booking_response.detail_hotel.base_price.total_price.amount}}</td>
+            {% else %}
+            <td>null</td>
+            {% endif %}
+			<!--<td>{{result.booking_response.detail_hotel.tag}}</td></tr>-->
+		    </table>
+			<hr/>
+			
+            {% if result.booking_response.detail_hotel.detail_ota_list %}
+			{% for a_ota in result.booking_response.detail_hotel.detail_ota_list %}
+            <table class="result_table" border="3">
+			  <br/>
+			  <div style="font-size:20px;color:blue;">► otaInfo(oid={{a_ota.ota_id}}, status={{a_ota.hotel_status}})</div>
+              <tr class="heading">
+			    <!--ota info-->
+				<th>hotel_id</th>
+			    <th>crawl_time</th>
+			    <th>ota_base_price</th>
+				<!--room info-->
+			    <th>room_id</th>
+			    <th>room_name_cn</th>
+			    <th>mroom_info</th>
+                <th>product_feature</th>
+                <th>p_mroom_id</th>
+			    <th>room_base_price</th>
+			    <!--product info-->
+				<th>source_ota_id->ota_id</th>
+				<th>product_promotion_info</th>
+				<th>cost_price</th>
+				<th>origin_price</th>
+				<th>base_sale_price</th>
+				<th>sale_price</th>
+				<th>ota_sign</th>
+                <th>elong_pid</th>
+                <th>product_name_cn</th>
+                <th>pay_type</th>
+                <th>elong_pname</th>
+                <th>cancellation_info_list--------------------------------------------------------</th>
+                <th>elong_cancellation_info_list---------------------------------------------</th>
+              </tr>
+                {% for a_room in a_ota.room_list %}			  
+                {% for a_product in a_room.product_list %}
+                <tr>
+				  <!--ota info-->
+				  <td >{{a_ota.base_hotel_id}}</td>
+                  <td >{{a_ota.crawl_time}}</td>
+                  {% if a_ota.base_price %}
+		          <td >{{a_ota.base_price.total_price.amount}}</td>
+                  {% else %}
+                  <td>null</td>
+                  {% endif %}
+				  <!--room info-->
+                  <td>{{a_room.room_id}}</td>
+			      <td>{{a_room.room_name_cn}}</td>
+                  <td>
+                  id:{% if a_room.mroom_id %}{{a_room.mroom_id}}{% else %}null{% endif %}</br>name_cn:</br>{% if a_room.mroom_name_cn %}{{a_room.mroom_name_cn}}{% else %}null{% endif %}</br>
+                  </td>
+                  <td>{{a_product.product_feature}}</td>
+                  <td>{% if a_product.mroom_id %}{{a_product.mroom_id}}{% else %}null{% endif %}</td>
+                  {% if a_room.base_price %}
+			      <td>{{a_room.base_price.total_price.amount}}</td>
+                  {% else %}
+                  <td>null</td>
+                  {% endif %}
+				  <!--product info-->
+				  <td>{{a_product.source_ota_id}}--{{a_ota.ota_id}}</td>
+				  <td>{{a_product.promotion_info}}</td>
+                  <td>total:{{a_product.cost_price.total_price.amount}}</td>
+				  <td>total:{{a_product.origin_price.total_price.amount}}
+                      total_avg:{{a_product.origin_price.average_price.amount}}
+                      room:{{a_product.origin_price.total_room_price.amount}}
+                      room_avg:{{a_product.origin_price.average_room_price.amount}}
+                      total_ori:{{a_product.origin_price.total_price_ori.amount}}
+                      {% if a_product.origin_price.addition_price %}
+                      addition_price:{{a_product.origin_price.addition_price}}
+                      {% else %}
+                      addition_price:null
+                      {% endif %}</td>
+				  <td>{% if a_product.base_sale_price %}
+                      total:{{a_product.base_sale_price.total_price.amount}}
+                      total_avg:{{a_product.base_sale_price.average_price.amount}}
+                      room:{{a_product.base_sale_price.total_room_price.amount}}
+                      room_avg:{{a_product.base_sale_price.average_room_price.amount}}
+                      total_ori:{{a_product.base_sale_price.total_price_ori.amount}}
+                      {% if a_product.base_sale_price.addition_price %}
+                      addition:{{a_product.base_sale_price.addition_price}}
+                      {% else %}
+                      addition:null
+                      {% endif %}
+                      {% if a_product.base_sale_price.sort_price %}
+                      sort_price:{{a_product.base_sale_price.sort_price.amount}}
+                      {% else %}
+                      sort_price:null
+                      {% endif %}
+                      {% endif %}</td>
+				  <td>total:{{a_product.sale_price.total_price.amount}}
+                      total_avg:{{a_product.sale_price.average_price.amount}}
+                      room:{{a_product.sale_price.total_room_price.amount}}
+                      room_avg:{{a_product.sale_price.average_room_price.amount}}
+                      total_ori:{{a_product.sale_price.total_price_ori.amount}}
+                      {% if a_product.sale_price.addition_price %}
+                      addition:{{a_product.sale_price.addition_price}}
+                      {% else %}
+                      addition:null
+                      {% endif %}
+                      {% if a_product.sale_price.sort_price %}
+                      sort_price:{{a_product.sale_price.sort_price.amount}}
+                      {% else %}
+                      sort_price:null
+                      {% endif %}</td>
+				  <td>{{a_product.ota_sign}}</td>
+                  <td>{{a_product.elong_pid}}</td>
+                  <td>{{a_product.product_name_cn}}</td>
+                  <td>{% if a_product.rateplan.pay_type %}
+                      {{a_product.rateplan.pay_type}}
+                      {% else %}
+                      null
+                      {% endif %}</td>
+                  <td>{% if a_product.elong_pname %}
+                      {{a_product.elong_pname}}
+                      {% else %}
+                      0
+                      {% endif %}</td>
+                  <td>{% if a_product.rateplan.cancellation_info_list %}
+                      {% for c in a_product.rateplan.cancellation_info_list %}
+                      {{c.start_date}}--{{c.end_date}}
+                      (pr={% if c.customer_price and c.customer_price.amount %}
+                          {{c.customer_price.amount}}
+                          {% else %}
+                          0
+                          {% endif %},{{c.refundable}})~~~
+                      {% endfor %}
+                      {% else %}
+                      null
+                      {% endif %}</td>
+                <td>{% if a_product.rateplan.elong_cancellation_info_list %}
+                      {% for ec in a_product.rateplan.elong_cancellation_info_list %}
+                      {{ec.start_date}}--{{ec.end_date}}
+                      (pr={% if ec.customer_price and ec.customer_price.amount %}
+                          {{ec.customer_price.amount}}
+                          {% else %}
+                          0
+                          {% endif %},{{ec.refundable}})~~~
+                      {% endfor %}
+                      {% else %}
+                      null
+                      {% endif %}</td>
+                </tr>
+                {% endfor %}
+				<!--
+			    </table>
+				<hr style="height:10px;border:none;border-top:10px groove skyblue;" />
+				-->
+              {% endfor %}
+            {% endfor %}
+			</table>
+			<!--<hr style="height:10px;border:none;border-top:10px groove skyblue;" />-->
+		   {% endif %}
+		  {% endif %}
+        {% endif %}
+		{% else %}
+		    <div class="query_title">BookingResponse</div><hr/>
+		    <textarea style="width:100%; height:1000px;">{{result}}</textarea>
+		{% endif %}
+		{% endif %}
+        </div>
+        <!--booking_response end-->
+
+    </form>
+    </div>
+</div>
+</body>
+</html>

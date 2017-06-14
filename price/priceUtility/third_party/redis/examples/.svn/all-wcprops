@@ -1,0 +1,59 @@
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/Code/!svn/ver/442351/Search/ihotel/as/Trunk/src/redis_cluster_cli/examples
+END
+serial.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/Code/!svn/ver/437090/Search/ihotel/as/Trunk/src/redis_cluster_cli/examples/serial.cpp
+END
+cluster.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/Code/!svn/ver/437090/Search/ihotel/as/Trunk/src/redis_cluster_cli/examples/cluster.cpp
+END
+hset.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/Code/!svn/ver/442351/Search/ihotel/as/Trunk/src/redis_cluster_cli/examples/hset.cpp
+END
+append.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/svn/Code/!svn/ver/437090/Search/ihotel/as/Trunk/src/redis_cluster_cli/examples/append.cpp
+END
+hget.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/Code/!svn/ver/442351/Search/ihotel/as/Trunk/src/redis_cluster_cli/examples/hget.cpp
+END
+serialize.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/Code/!svn/ver/437090/Search/ihotel/as/Trunk/src/redis_cluster_cli/examples/serialize.cpp
+END
+key.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/Code/!svn/ver/442351/Search/ihotel/as/Trunk/src/redis_cluster_cli/examples/key.cpp
+END
+run.sh
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/svn/Code/!svn/ver/437090/Search/ihotel/as/Trunk/src/redis_cluster_cli/examples/run.sh
+END
+tags
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/Code/!svn/ver/437090/Search/ihotel/as/Trunk/src/redis_cluster_cli/examples/tags
+END

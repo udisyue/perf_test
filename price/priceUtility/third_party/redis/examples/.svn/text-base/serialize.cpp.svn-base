@@ -1,0 +1,166 @@
+#include <iostream>  
+#include <stdint.h>
+#include <cstring>
+#include <vector>
+#include <cmath>
+#include <cstdio>
+using namespace std;  
+
+const uint16_t MOBILE_MASK  = 0X80;
+#pragma pack(push)
+#pragma pack(1)
+// ota粒度索引版
+struct MiniPriceUnit {
+    MiniPriceUnit() :
+            id(0), price(0) {
+    }
+    uint16_t id :8;    // 供应商id，非0
+    // [0:1]保留
+    // [2:4]标识price的3byte是否为0
+    // [5:7]标识total_price的3byte是否为0
+    uint16_t flag :8;
+    uint32_t price :24; // 原始房价
+    uint32_t total_price :24; // 原始税后价
+    uint32_t ota_id() const {
+        return id & (~MOBILE_MASK);
+    }
+    bool mobile_only() const {
+        return id & MOBILE_MASK;
+    }
+};
+
+// ota粒度内存版
+struct PriceUnit {
+    PriceUnit() :
+            id(0), price(0), elong_price(0), total_price(0), elong_total_price(0) {
+    }
+    PriceUnit(uint8_t id, uint32_t price, uint32_t total_price) :
+            id(id), 
+            price(price), 
+            elong_price(price), 
+            total_price(total_price),
+            elong_total_price(total_price),
+            mobile_only(false) {
+    }
+    uint16_t id;
+    uint32_t price;         // 原始房价
+    uint32_t elong_price;   // elong房价
+    uint32_t total_price;   // 原始含税价
+    uint32_t elong_total_price; // elong含税价
+    bool mobile_only;
+    // 带手机专项价的id， 最高位为1
+    uint32_t mini_id() const {
+        return mobile_only ? id |  MOBILE_MASK: id;
+    }
+    uint32_t high_price() const {
+        return round(price/10.0);
+    }
+    uint32_t high_elong_price() const {
+            return round(elong_price/10.0);
+    }
+    uint32_t high_total_price() const {
+        return round(total_price/10.0);
+    }
+    uint32_t high_elong_total_price() const {
+            return round(elong_total_price/10.0);
+    }
+};
+
+void ParseFromString(std::string& input) {
+    // check data 
+    cout << "deserial data before decode: " << endl;
+    for (int j = 0; j < input.size(); j++){
+        printf(" %d:%x ", j, ( input[j] & 0xFF ));
+    }
+    cout << endl;
+    // std::string data("");
+    int item_size = sizeof(MiniPriceUnit);
+    for(int k = 0; k < input.size(); k += item_size){
+        // id
+        // input[k+0];
+        // price
+        if ( input[k+1] & 0x20) { input[k+2] &= 0x00; }
+        if ( input[k+1] & 0x10) { input[k+3] &= 0x00; }
+        if ( input[k+1] & 0x08) { input[k+4] &= 0x00; }
+        // total_price
+        if ( input[k+1] & 0x04) { input[k+5] &= 0x00; }
+        if ( input[k+1] & 0x02) { input[k+6] &= 0x00; }
+        if ( input[k+1] & 0x01) { input[k+7] &= 0x00; }
+    }
+
+    cout << "deserial data after decode: " << endl;
+    for (int i = 0; i < input.size(); i++){
+        printf(" %d:%x ", i, (input[i] & 0xFF ));
+    }
+    cout << endl;
+
+    size_t ota_num = input.size() * sizeof(char) / sizeof(MiniPriceUnit);
+    for (size_t i = 0; i < ota_num; ++i) {
+        MiniPriceUnit mpu;
+        memcpy((void*) (&mpu), (void*) (&input[i * sizeof(MiniPriceUnit)]),
+                sizeof(MiniPriceUnit));
+        cout << "result => [id=" << mpu.id << ", price=" << mpu.price << ", total_price="<< mpu.total_price <<"],";
+    }
+    cout << endl;
+}
+void SerializeToString(std::vector<PriceUnit>& pu, std::string& output) {
+    size_t len = pu.size() * sizeof(MiniPriceUnit);
+    char cc[len];
+    for (uint8_t i = 0; i < pu.size(); ++i) {
+        MiniPriceUnit mpu;
+        mpu.id = pu[i].mini_id();    // 4 byte
+        mpu.flag = 0;    // 4 byte
+        mpu.price = pu[i].price;     // 4 byte
+        mpu.total_price = pu[i].total_price; // 4 byte
+        memcpy(cc + sizeof(MiniPriceUnit) * i, (void*) (&mpu),
+                sizeof(MiniPriceUnit));
+    }
+    // check output before encode
+    output.assign(cc, len);
+    cout << "serial data before encode: " << endl;
+    for (int i = 0; i < output.size(); i++){
+        printf(" %d:%x ", i, (output[i] & 0xFF));
+    }
+    cout << endl;
+
+    int item_size = sizeof(MiniPriceUnit);
+    for(int k = 0; k < output.size(); k += item_size){
+        // id
+        // output[k+0];
+        // flag
+        // output[k+1]
+        // price
+        if (!(output[k+2] & 0xFF)) { output[k+1] |= 0x20; output[k+2] |= 0x01; }
+        if (!(output[k+3] & 0xFF)) { output[k+1] |= 0x10; output[k+3] |= 0x01; }
+        if (!(output[k+4] & 0xFF)) { output[k+1] |= 0x08; output[k+4] |= 0x01; }
+        // total_price
+        if (!(output[k+5] & 0xFF)) { output[k+1] |= 0x04; output[k+5] |= 0x01; }
+        if (!(output[k+6] & 0xFF)) { output[k+1] |= 0x02; output[k+6] |= 0x01; }
+        if (!(output[k+7] & 0xFF)) { output[k+1] |= 0x01; output[k+7] |= 0x01; }
+        printf("zero_flag : %x \n", (output[k+1] & 0xFF));
+    }
+    
+    // check output after encode
+    cout << "serial data after encode: " << endl;
+    for (int j = 0; j < output.size(); j++){
+        printf(" %d:%x ", j, ( output[j] & 0xFF));
+    }
+    cout << endl << "=====================================" << endl;
+}
+#pragma pack(pop)
+
+int main(int argc,char *argv[])  
+{ 
+    PriceUnit pu1(7, 235, 732);
+    PriceUnit pu2(2, 38, 40);
+    std::vector<PriceUnit> pu;
+    pu.push_back(pu1);
+    pu.push_back(pu2);
+    std::string out("");
+    SerializeToString(pu, out);
+    // cout << out << endl;
+
+    ParseFromString(out);
+    
+    return 0;  
+}  

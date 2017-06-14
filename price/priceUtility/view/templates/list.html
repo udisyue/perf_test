@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>列表页</title>
+    <script type="text/javascript" src="static/My97DatePicker/WdatePicker.js"></script>
+    <!-- bootstrap -->
+    <link rel="stylesheet" type="text/css" href="static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="static/css/base.css">
+    <script src="static/jquery/jquery.js"></script>
+    <script src="static/bootstrap/js/bootstrap.min.js"></script>
+</head>
+<style type="text/css">
+
+#showResult { width:100%; height:500px;}
+
+.query_table { width:100%;}
+.query_table tr th { padding:10px; text-align:center; }
+.query_table tr td { padding:10px; }
+
+.result_table { width:100%; height:50px;bolder-collapse:collapse;}
+.result_table th,td { bolder:3 solid; text-align:left;}
+.heading{background-color:#BEBEBE;}
+.odd {background-color:#F0F0F0;}
+.even{background-color:#FFFFFF;}
+
+.query_title { 
+    text-align:left; 
+	padding:10px; 
+	font-size:20px; 
+	font-weigh:blod; 
+}
+
+.cities { background-color:Honeydew;border:1px solid red;}
+
+</style>
+
+<body>
+
+<nav class="navbar navbar-default navbar-static-top" role="navigation">
+<div class="navbar-header">
+  <!--a class="navbar-brand" style="line-height: 20px">价格服务列表页查询接口</a-->
+  <a class="navbar-brand" href="#">价格服务--列表页查询接口</a>
+</div>
+</nav>
+<div id="main-container" style="padding-left:15px;padding-right:15px;">
+
+    <form id="queryformdata" action="" method="post" class="form-inline" role="form">
+    <div class="cities">
+				<!--Server-->
+				<table class="query_table">
+					<tr>
+						<th>IP：</th>
+						<td><input type="text" name="IP" value={{req.ip}} /></td>
+						<th>Port：</th>
+						<td><input type="text" name="Port" value={{req.port}} /></td>
+						<th>show_type：</th>
+						<td><select name="showType">
+						   {% if req.show_type == "0" %}
+                             <option value="0" selected="selected">表格</option> 
+                             <option value="1">文本</option></select></td>
+						   {% else %}
+						     <option value="0">表格</option> 
+                             <option value="1" selected="selected">文本</option></select></td>
+						   {% endif %}
+						<th><button type="submit" class="form-control" style="background:red;color:white">Search</button></th>
+						<td></td>
+					</tr>
+				    <!--list_req-->
+					<tr>
+						<th>hotel_id：</th>
+						<td><input type="text" name="hotelId" value={{req.hotel_id}} /></td>
+						<th>filter_ota：</th>
+						<td><input type="text" name="filterOta" value={{req.filter_ota}} /></td>
+						<th>checkin：</th>
+						<td><input type="text" name="checkIn" onclick="WdatePicker()" value={{req.checkin}} /></td>
+						<th>checkout：</th>
+						<td><input type="text" name="checkOut" onclick="WdatePicker()" value={{req.checkout}} /></td>
+					</tr>
+					<tr>
+						<th>adult_num：</th>
+						<td><input type="text" name="audultNum" value={{req.adult_num}} /></td>
+						<th>children：</th>
+						{% if req.children != "" %}
+						<td><input type="text" name="childAges" value={{req.children}}  /></td>
+						{% else %}
+						<td><input type="text" name="childAges" value=""  /></td>
+						{% endif %}
+						<th>list_query_flag：</th>
+						<td><input type="text" name="listQueryFlag" value={{req.list_query_flag}} /></td>
+						<th>search_id：</th>
+						<td><input type="text" name="searchId" value={{req.search_id}}  /></td> 			
+					</tr>
+					<!--user_info-->
+					<tr>						
+						<!--<th>order_from：</th>
+						<td><input type="text" name="orderFrom" value={{req.order_from}} /></td>
+						<th>customer_level：</th>
+						<td><input type="text" name="customerLevel" value={{req.customer_level}} /></td>-->
+						<!--<th>user_ip：</th>
+						<td><input type="text" name="userIp" value={{req.user_ip}} /></td>-->
+						<th>user_id：</th>
+						{% if req.user_id != "" %}
+						    <td><input type="text" name="userId" value={{req.user_id}} /></td>
+						{% else %}
+						    <td><input type="text" name="userId" value="" /></td>
+						{% endif %}
+						<th>activity_id：</th>
+						{% if req.activity_id != "" %}
+						<td><input type="text" name="activityId" value={{req.activity_id}} /></td>
+						{% else %}
+						<td><input type="text" name="activityId" value="" /></td>
+						{% endif %}
+						<th>booking_channel：</th>
+						<td><input type="text" name="bookingChannel" value={{req.booking_channel}} /></td>
+						<th>region_id：</th>
+						<td><input type="text" name="regionId" value={{req.region_id}} /></td>
+					</tr>
+				</table>
+        </div>
+		<hr />
+        <!--list_response begin-->
+        <div>
+        {% if result %}
+          {% if req.show_type == "0" %}
+		  {% if result.list_response %}
+		    <div class="query_title">ListResponse</div><hr/>
+            <table style="width:100%; height:30px;text-align:left;">	
+		       <tr><th>search_id:</th><td >{{result.search_id}}</td></tr>
+               <tr><th>service_status:</th><td >{{result.service_status}}</td></tr>
+               <tr>
+                   <th>region_promotion:</th>
+			       {% if result.list_response.region_promotion_info %}
+                   <td>{{result.list_response.region_promotion_info}}</td>
+                   {% else %}
+                   <td>null</td>
+			       {% endif %}
+               </tr>
+		    </table>
+			<hr/>
+            <div style="font-size:15px;">hotelInfo</div>  
+            <table class="result_table" border="3">
+              <tr class="heading">
+                <th>hotel_id</th>
+                <th>crawl_time</th>
+				<th>booking_status</th>
+				<th>refresh_status</th>
+				<th>list_ota</th>
+				<th>promotion_info</th>
+				<th>mobile_only</th>
+              </tr>
+              {% for a_hotel in result.list_response.list_hotel %}
+			    {% if loop.index % 2 == 0 %}
+				<tr class="odd">
+                  <td>{{a_hotel.base_hotel_id}}</td>
+				  {% if a_hotel %}
+                  <td>{{a_hotel.crawl_time}}</td>
+				  <td>{{a_hotel.booking_status}}</td>
+				  <td>{{a_hotel.refresh_status}}</td>
+                  {% if a_hotel.list_ota_list %}
+                      {% for a_ota in a_hotel.list_ota_list %}
+                      <td>origin_price:[{{a_ota.origin_price.average_room_price.amount}},{{a_ota.origin_price.average_price.amount}}]</br>
+                          base_sale_price:[{{a_ota.base_sale_price.average_room_price.amount}},{{a_ota.base_sale_price.average_price.amount}}]</br>
+                          sale_price:[{{a_ota.sale_price.average_room_price.amount}},{{a_ota.sale_price.average_price.amount}}]</br>
+                          crawl_time:{{a_ota.crawl_time}}</br>
+                          ota_id:{{a_ota.ota_id}}</br>
+                          pay_type:{{a_ota.pay_type}}</br>
+                      </td>
+                      {% endfor %}
+                  {% else %}
+                      <td>null</td>
+                  {% endif %}
+				  <td>{{a_hotel.promotion_info}}</td>
+				  <td>{{a_hotel.mobile_only}}</td>
+				  {% else %}
+				  <td/><td/><td/><td/><td/><td/>
+				  {% endif %}
+				</tr>
+				{% else %}
+				<tr class="even">
+                  <td>{{a_hotel.base_hotel_id}}</td>
+				  {% if a_hotel %}
+                  <td>{{a_hotel.crawl_time}}</td>
+				  <td>{{a_hotel.booking_status}}</td>
+				  <td>{{a_hotel.refresh_status}}</td>
+                  {% if a_hotel.list_ota_list %}
+                      {% for a_ota in a_hotel.list_ota_list %}
+                      <td>origin_price:[{{a_ota.origin_price.average_room_price.amount}},{{a_ota.origin_price.average_price.amount}}]</br>
+                          base_sale_price:[{{a_ota.base_sale_price.average_room_price.amount}},{{a_ota.base_sale_price.average_price.amount}}]</br>
+                          sale_price:[{{a_ota.sale_price.average_room_price.amount}},{{a_ota.sale_price.average_price.amount}}]</br>
+                          crawl_time:{{a_ota.crawl_time}}</br>
+                          ota_id:{{a_ota.ota_id}}</br>
+                          pay_type:{{a_ota.pay_type}}</br>
+                      </td>
+                      {% endfor %}
+                  {% else %}
+                      <td>null</td>
+                  {% endif %}
+				  <td>{{a_hotel.promotion_info}}</td>
+				  <td>{{a_hotel.mobile_only}}</td>
+				  {% else %}
+				  <td/><td/><td/><td/><td/><td/>
+				  {% endif %}
+				</tr>
+				{% endif %}
+              {% endfor %}
+            </table>
+		  {% endif %}
+		  {% else %}
+		  <div class="query_title">ListResponse</div><hr/>
+		  <textarea style="width:100%; height:1000px;">{{result}}</textarea>
+		  {% endif %}
+        {% endif %}
+        <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+        <div>说明：filter_ota设置，请求多个供应商时求和；</div>
+        <div>booking--1---2, ean--2---4, agoda--3---8, elong--5---32, hana--6---64, gta--7---128, vetu--8---256, ctrip--9---512, dida--10---1024, hotelbeds--11---2048, dotw--12---4096</div>        <div>eanpackage--13---8192,fgt--14---16384, agodapackage--15---32768,roomorama--16---65536, hotelspro--17---131072, zyx--18---262144,tourico--19---524288
+        </div>
+        <div>miki--20---1048576, travellanda--21---2097152, relux--22---4194304, methabook--23---8388608, haoqiao--24---16777216, letsfly--25---33554432</div>
+        </div> 
+        <!--list_response end-->
+
+    </form>
+    </div>
+</div>
+</body>
+</html>

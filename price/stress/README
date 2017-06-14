@@ -1,0 +1,21 @@
+第一步：
+multimech-newproject 工程名
+
+第二步：
+test_scripts 写测试逻辑
+
+第三步：
+multimech-run 工程名
+
+=> 查看结果：
+mv results/ /var/www/html
+通过Apache查看：http://192.168.14.170/results/results_2017.05.03_17.11.41/results.html
+
+
+=> 通过服务端统计ps
+
+统计服务平均耗时：
+cat price.log.st.20170510 | grep s=12345678910 | awk -F' |at=' 'BEGIN{n=0;sum=0;}{n++; sum=sum+$8}END{print n, sum, sum/n}'
+
+统计成功请求数：
+cat price.log.outin.2017051020 | grep "\"businessCode\":\"403000" | wc -l

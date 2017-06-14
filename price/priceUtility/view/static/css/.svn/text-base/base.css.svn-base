@@ -1,0 +1,19 @@
+/* Bootstrap overrides */
+* {
+/*(font-size:12px;*/
+margin:0;
+padding:0;
+} 
+fieldset {
+padding:1px;
+margin:5px;
+font-size: 13px;
+color:#333;
+border:#06c dashed 1px;
+}
+legend {
+color:#06c;
+font-size: 16px;
+font-weight:200;
+background:#fff;
+} 

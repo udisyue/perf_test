@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>产品缓存查询</title>
+    <script type="text/javascript" src="static/My97DatePicker/WdatePicker.js"></script>
+    <!-- bootstrap -->
+    <link rel="stylesheet" type="text/css" href="static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="static/css/base.css">
+    <script src="static/jquery/jquery.js"></script>
+    <script src="static/bootstrap/js/bootstrap.min.js"></script>
+</head>
+<style type="text/css">
+
+.query_table { width100%;}
+.query_table tr th { padding:10px; text-align:center; }
+.query_table tr td { padding:10px; }
+
+.result_table { width:60%; height:50px;bolder-collapse:collapse;}
+.result_table th td { bolder:3 solid;}
+.heading{background-color:#BEBEBE;}
+.odd {background-color:#F0F0F0;}
+.even{background-color:#FFFFFF;}
+
+.query_title { 
+    text-align:left; 
+	padding:10px; 
+	font-size:20px; 
+	font-weigh:blod; 
+}
+
+.cities { background-color:Honeydew;border:1px solid red;}
+
+</style>
+
+<body>
+
+<nav class="navbar navbar-default navbar-static-top" role="navigation">
+<div class="navbar-header">
+  <a class="navbar-brand" href="#">价格服务-产品缓存查询</a>
+</div>
+</nav>
+<div id="main-container" style="padding-left:15px;padding-right:15px;">
+
+    <form id="queryformdata" action="" method="post" class="form-inline" role="form">
+    <div class="cities" >
+            <div id="result">	
+				<!--Server-->
+				<div><br/><b>&nbsp;redis-cluster：&nbsp;&nbsp;</b>
+				<select name="redis" style="width:300px;height:20px"> 
+                    {% if req.redis == "0" %}
+                      <option value="0" selected="selected">off-line [test]</option> 
+                      <option value="1">on-line</option>
+				      <option value="2">off-line [development]</option>
+                    {% elif req.redis == "1" %}
+					  <option value="0">off-line [test]</option> 
+                      <option value="1" selected="selected">on-line</option>
+				      <option value="2">off-line [development]</option>
+					{% else %}
+					  <option value="0">off-line [test]</option> 
+                      <option value="1">on-line</option>
+				      <option value="2" selected="selected">off-line [development]</option>
+					{% endif %}
+                </select> &nbsp;&nbsp;&nbsp;
+				<button type="submit" class="form-control" style="background:red;color:white">Search</button>
+				</div>
+				<table class="query_table" style="with:100%">
+					<tr>
+						<th>ver：</th>
+						<td><input type="text" name="version" value={{req.ver}} /></td>
+						<th>hotel_id：</th>
+						<td><input type="text" name="hotelId" value={{req.hotel_id}} /></td>
+						<th>checkin：</th>
+						<td><input type="text" name="checkIn" value={{req.checkin}} /></td>
+					    <th>checkout：</th>
+						<td><input type="text" name="checkOut" value={{req.checkout}} /></td>
+					<tr>
+					</tr>
+					    <th>ota：</th>
+						<td><input type="text" name="otaId" value={{req.otaid}} /></td>
+						<th>mobile：</th>
+						<td><input type="text" name="mobile" value={{req.mobile}} /></td>
+						<th>adult_num：</th>
+						<td><input type="text" name="audultNum" value={{req.adult_num}} /></td>
+						<th>children：</th>
+						<td><input type="text" name="childAges" value={{req.children}} /></td>
+						
+					<tr>	
+                    <!--</tr>
+					    <th>bc：</th>
+						<td><input type="text" name="bookingChannel" value={{req.bc}} /></td>
+					    <th>of：</th>
+						<td><input type="text" name="orderFrom" value={{req.of}} /></td>
+					    <th>cl：</th>
+						<td><input type="text" name="customerLevel" value={{req.cl}} /></td>
+						<th></th>
+						<td></td>
+					<tr>-->					
+				</table>
+            </div>
+        </div>
+		<hr />
+		{% if result %}
+		<!--get key-->
+        <div class="query_title">Key</div>
+		<textarea style="width:40%; height:30px;">{{result.key}}</textarea><br/><hr/>
+         <!--detail_cache begin-->	
+        <div>
+			<div class="query_title">DetailCache</div>
+			 {% for a_room in result.value.room_list %}
+             <br/><div style="font-size:20px;color:blue;">► room_id={{a_room.room_id}}</div>			 
+			 <!--<div>room_desc：{{a_room.room_desc}}</div>-->
+			 <table style="width:60%; height:30px;" border="3">
+              <tr class="heading">
+                <!--room_info-->
+                <th>user_info</th>
+                <th>elong_pid</th>
+                <th>ota_pid</th>
+                <th>room_status</th>
+                <th>allotment</th>
+                <!--<th>product_name_cn</th>
+                <th>product_name_en</th>-->
+				<th>pay_type</th>
+				<!--<th>product_desc</th>-->
+				<th>room_num</th>
+				<th>booking_price</th>
+				<th>cost_price</th>
+				<th>origin_price</th>
+				<th>promotion_info</th>
+				<th>product_filter</th>
+              </tr>
+                {% for a_product in a_room.product_list %}
+                <tr>
+                  <!--room_info-->
+				  <td>ip:{{a_product.rateplan.user_info.user_ip}}
+                      booking_channel:{{a_product.rateplan.user_info.booking_channel}}
+                      customer_level:{{a_product.rateplan.user_info.customer_level}}
+                      order_from:{{a_product.rateplan.user_info.customer_level}}</td>
+                  <td>{{a_product.elong_pid}}</td>
+                  <td>{{a_product.ota_pid}}</td>
+				  <td>{{a_room.room_status}}</td>
+				  <td>{{a_room.allotment}}</td>
+                  <!--<td>{{a_product.product_name_cn}}</td>
+                  <td>{{a_product.product_name_en}}</td>-->
+				  <td>{{a_product.rateplan.pay_type}}</td>
+				  <!--<td>{{a_product.product_desc}}</td>-->
+				  <td>{{a_product.room_num}}</td>
+				  <td>total_price_ori:{{a_product.booking_price.total_price_ori.amount}}</td>
+				  <td>total_price_ori:{{a_product.cost_price.total_price_ori.amount}}
+                      total_price:{{a_product.cost_price.total_price.amount}}
+                      {% if a_product.cost_price.average_price %}
+                      average_price:{{a_product.cost_price.average_price.amount}}
+                      {% else %}
+                      average_price:null
+                      {% endif %}</td>
+                  <td>total:{{a_product.origin_price.total_price.amount}}
+                      total_avg:{{a_product.origin_price.average_price.amount}}
+                      room:{{a_product.origin_price.total_room_price.amount}}
+                      room_avg:{{a_product.origin_price.average_room_price.amount}}
+                      total_ori:{{a_product.origin_price.total_price_ori.amount}}
+                      {% if a_product.origin_price.addition_price %}
+                      addition_price:{{a_product.origin_price.addition_price}}
+                      {% else %}
+                      addition_price:null
+                      {% endif %}</td>
+				  <td>{{a_product.promotion_info}}</td>
+				  <td>{{a_product.product_filter}}</td>
+                </tr>
+                {% endfor %}
+            </table>
+			{% endfor %}
+        </div>
+		{% endif %}
+        <!--detail_cache end-->
+
+    </form>
+    </div>
+</div>
+</body>
+</html>

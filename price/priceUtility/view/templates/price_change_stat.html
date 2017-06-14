@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>变价率统计指标</title>
+    <script type="text/javascript" src="static/My97DatePicker/WdatePicker.js"></script>
+    <!-- bootstrap -->
+    <link rel="stylesheet" type="text/css" href="static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="static/css/base.css">
+    <script src="static/jquery/jquery.js"></script>
+    <script src="static/bootstrap/js/bootstrap.min.js"></script>
+	<script src="{{ url_for('static', filename='echarts.js')}}"></script>
+</head>
+</head>
+<style type="text/css">
+
+#showResult { width:100%; height:500px;}
+
+.query_table { width:100%;}
+.query_table tr th { padding:10px; text-align:right; }
+.query_table tr td { padding:10px; }
+
+.result_table { width:60%; height:50px;bolder-collapse:collapse;}
+.result_table th td { bolder:3 solid;}
+.heading{background-color:#BEBEBE;}
+.odd {background-color:#F0F0F0;}
+.even{background-color:#FFFFFF;}
+
+.query_title { 
+    text-align:center; 
+	padding:10px; 
+	font-size:20px; 
+	font-weigh:blod; 
+}
+
+.cities { background-color:Honeydew;}
+
+</style>
+
+<body>
+
+<nav class="navbar navbar-default navbar-static-top" role="navigation">
+<div class="navbar-header">
+  <a class="navbar-brand" href="#">变价率统计指标</a>
+</div>
+</nav>
+<div id="main-container" style="padding-left:15px;padding-right:15px;">
+
+    <form id="queryformdata" action="" method="post" class="form-inline" role="form">
+    <div class="cities">
+            <div id="result">			
+				<!--Server-->
+				<table class="query_table" style="with:100%">
+					<tr>
+						<th>begin_time：</th>
+						<td><input type="text" name="beginTime" onclick="WdatePicker()" value={{req.begin_time}} /></td>
+						<th>end_time：</th>
+						<td><input type="text" name="endTime" onclick="WdatePicker()" value={{req.end_time}} /></td>
+						<th>type：</th>
+						<td><select name="showType">
+						   {% if req.show_type == "0" %}
+                             <option value="0" selected="selected">绘图</option> 
+                             <option value="1">表格</option></select></td>
+						   {% else %}
+						     <option value="0">绘图</option> 
+                             <option value="1" selected="selected">表格</option></select></td>
+						   {% endif %}
+						<th></th>
+						<td><button type="submit" class="form-control" style="background:red;color:white">Search</button></td>
+					</tr>					
+				</table>
+            </div>
+        </div>
+		<hr />
+		{% if picture %}
+		<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+		<div id="total_data" style="width:80%;height:400px;"></div>
+		<div id="spider_rate_data" style="width: 80%;height:400px;"></div>
+        <div id="list_null_net_rate_data" style="width: 80%;height:400px;"></div>
+		<div id="list_no_null_detail_null_net_rate_data" style="width: 80%;height:400px;"></div>
+		<div id="pnc_ota_id_same_net_rate_data" style="width: 80%;height:400px;"></div>
+		<div id="pnc_ota_id_differ_net_rate_data" style="width: 80%;height:400px;"></div>
+		<div id="pc_ota_id_differ_list_no_detail_net_rate_data" style="width: 80%;height:400px;"></div>
+		<div id="pc_ota_id_differ_detail_no_list_net_rate_data" style="width: 80%;height:400px;"></div>
+		<div id="pc_ota_id_differ_list_detail_net_rate_data" style="width: 80%;height:400px;"></div>
+		<div id="pc_ota_id_same_net_rate_data" style="width: 80%;height:400px;"></div>
+
+        <script type="text/javascript">	
+		
+        // 基于准备好的dom，初始化echarts实例
+		var total_data_myChart = echarts.init(document.getElementById('total_data'));
+		var spider_rate_data_myChart = echarts.init(document.getElementById('spider_rate_data'));
+        var list_null_net_rate_data_myChart = echarts.init(document.getElementById('list_null_net_rate_data'));
+		var list_no_null_detail_null_net_rate_data_myChart = echarts.init(document.getElementById('list_no_null_detail_null_net_rate_data'));
+		var pnc_ota_id_same_net_rate_data_myChart = echarts.init(document.getElementById('pnc_ota_id_same_net_rate_data'));
+		var pnc_ota_id_differ_net_rate_data_myChart = echarts.init(document.getElementById('pnc_ota_id_differ_net_rate_data'));
+		var pc_ota_id_differ_list_no_detail_net_rate_data_myChart = echarts.init(document.getElementById('pc_ota_id_differ_list_no_detail_net_rate_data'));
+		var pc_ota_id_differ_detail_no_list_net_rate_data_myChart = echarts.init(document.getElementById('pc_ota_id_differ_detail_no_list_net_rate_data'));
+		var pc_ota_id_differ_list_detail_net_rate_data_myChart = echarts.init(document.getElementById('pc_ota_id_differ_list_detail_net_rate_data'));
+		var pc_ota_id_same_net_rate_data_myChart = echarts.init(document.getElementById('pc_ota_id_same_net_rate_data'));
+		
+		// 图表数据 total
+		var in_param_var = {{ picture|tojson }};
+        var total = {
+		    color: [in_param_var.total.color],
+            title: {
+                text: in_param_var.total.title_text
+            },
+            tooltip: {
+			    trigger: 'axis',
+				axisPointer : {
+				    type : 'shadow'
+                }				
+			},
+            legend: {
+                data: in_param_var.total.legend_data
+            },
+            xAxis: {
+                data: in_param_var.total.xAxis_data
+            },
+            yAxis: {},
+            series: [{
+                name: in_param_var.total.series_name,
+                type: in_param_var.total.series_type,
+				barWidth: '50%',
+                data: in_param_var.total.series_data
+            }]
+        };
+		
+		// 图表数据 spider_rate
+        var spider_rate = {
+		    color: [in_param_var.spider_rate.color],
+            title: {
+                text: in_param_var.spider_rate.title_text
+            },
+            tooltip: {
+			    trigger: 'axis',
+				axisPointer : {
+				    type : 'shadow'
+                }				
+			},
+            legend: {
+                data: in_param_var.spider_rate.legend_data
+            },
+            xAxis: {
+                data: in_param_var.spider_rate.xAxis_data
+            },
+            yAxis: {},
+            series: [{
+                name: in_param_var.spider_rate.series_name,
+                type: in_param_var.spider_rate.series_type,
+				barWidth: '50%',
+                data: in_param_var.spider_rate.series_data
+            }]
+        };
+		
+
+        // 图表数据 list_null_net_rate
+        var list_null_net_rate = {
+		    color: [in_param_var.list_null_net_rate.color],
+            title: {
+                text: in_param_var.list_null_net_rate.title_text
+            },
+            tooltip: {
+			    trigger: 'axis',
+				axisPointer : {
+				    type : 'shadow'
+                }				
+			},
+            legend: {
+                data: in_param_var.list_null_net_rate.legend_data
+            },
+            xAxis: {
+                data: in_param_var.list_null_net_rate.xAxis_data
+            },
+            yAxis: {},
+            series: [{
+                name: in_param_var.list_null_net_rate.series_name,
+                type: in_param_var.list_null_net_rate.series_type,
+				barWidth: '50%',
+                data: in_param_var.list_null_net_rate.series_data
+            }]
+        };
+		
+		
+		// 图表数据 list_no_null_detail_null_net_rate
+        var list_no_null_detail_null_net_rate = {
+		    color: [in_param_var.list_no_null_detail_null_net_rate.color],
+            title: {
+                text: in_param_var.list_no_null_detail_null_net_rate.title_text
+            },
+            tooltip: {
+			    trigger: 'axis',
+				axisPointer : {
+				    type : 'shadow'
+                }				
+			},
+            legend: {
+                data: in_param_var.list_no_null_detail_null_net_rate.legend_data
+            },
+            xAxis: {
+                data: in_param_var.list_no_null_detail_null_net_rate.xAxis_data
+            },
+            yAxis: {},
+            series: [{
+                name: in_param_var.list_no_null_detail_null_net_rate.series_name,
+                type: in_param_var.list_no_null_detail_null_net_rate.series_type,
+				barWidth: '50%',
+                data: in_param_var.list_no_null_detail_null_net_rate.series_data
+            }]
+        };
+		
+		
+		
+		// 图表数据 pnc_ota_id_same_net_rate
+        var pnc_ota_id_same_net_rate = {
+		    color: [in_param_var.pnc_ota_id_same_net_rate.color],
+            title: {
+                text: in_param_var.pnc_ota_id_same_net_rate.title_text
+            },
+            tooltip: {
+			    trigger: 'axis',
+				axisPointer : {
+				    type : 'shadow'
+                }				
+			},
+            legend: {
+                data: in_param_var.pnc_ota_id_same_net_rate.legend_data
+            },
+            xAxis: {
+                data: in_param_var.pnc_ota_id_same_net_rate.xAxis_data
+            },
+            yAxis: {},
+            series: [{
+                name: in_param_var.pnc_ota_id_same_net_rate.series_name,
+                type: in_param_var.pnc_ota_id_same_net_rate.series_type,
+				barWidth: '50%',
+                data: in_param_var.pnc_ota_id_same_net_rate.series_data
+            }]
+        };
+		
+		
+		
+		// 图表数据 pnc_ota_id_differ_net_rate
+        var pnc_ota_id_differ_net_rate = {
+		    color: [in_param_var.pnc_ota_id_differ_net_rate.color],
+            title: {
+                text: in_param_var.pnc_ota_id_differ_net_rate.title_text
+            },
+            tooltip: {
+			    trigger: 'axis',
+				axisPointer : {
+				    type : 'shadow'
+                }				
+			},
+            legend: {
+                data: in_param_var.pnc_ota_id_differ_net_rate.legend_data
+            },
+            xAxis: {
+                data: in_param_var.pnc_ota_id_differ_net_rate.xAxis_data
+            },
+            yAxis: {},
+            series: [{
+                name: in_param_var.pnc_ota_id_differ_net_rate.series_name,
+                type: in_param_var.pnc_ota_id_differ_net_rate.series_type,
+				barWidth: '50%',
+                data: in_param_var.pnc_ota_id_differ_net_rate.series_data
+            }]
+        };
+		
+		
+		
+		
+		// 图表数据 pc_ota_id_differ_list_no_detail_net_rate
+        var pc_ota_id_differ_list_no_detail_net_rate = {
+		    color: [in_param_var.pc_ota_id_differ_list_no_detail_net_rate.color],
+            title: {
+                text: in_param_var.pc_ota_id_differ_list_no_detail_net_rate.title_text
+            },
+            tooltip: {
+			    trigger: 'axis',
+				axisPointer : {
+				    type : 'shadow'
+                }				
+			},
+            legend: {
+                data: in_param_var.pc_ota_id_differ_list_no_detail_net_rate.legend_data
+            },
+            xAxis: {
+                data: in_param_var.pc_ota_id_differ_list_no_detail_net_rate.xAxis_data
+            },
+            yAxis: {},
+            series: [{
+                name: in_param_var.pc_ota_id_differ_list_no_detail_net_rate.series_name,
+                type: in_param_var.pc_ota_id_differ_list_no_detail_net_rate.series_type,
+				barWidth: '50%',
+                data: in_param_var.pc_ota_id_differ_list_no_detail_net_rate.series_data
+            }]
+        };
+		
+		
+		
+		
+		// 图表数据 pc_ota_id_differ_detail_no_list_net_rate
+        var pc_ota_id_differ_detail_no_list_net_rate = {
+		    color: [in_param_var.pc_ota_id_differ_detail_no_list_net_rate.color],
+            title: {
+                text: in_param_var.pc_ota_id_differ_detail_no_list_net_rate.title_text
+            },
+            tooltip: {
+			    trigger: 'axis',
+				axisPointer : {
+				    type : 'shadow'
+                }				
+			},
+            legend: {
+                data: in_param_var.pc_ota_id_differ_detail_no_list_net_rate.legend_data
+            },
+            xAxis: {
+                data: in_param_var.pc_ota_id_differ_detail_no_list_net_rate.xAxis_data
+            },
+            yAxis: {},
+            series: [{
+                name: in_param_var.pc_ota_id_differ_detail_no_list_net_rate.series_name,
+                type: in_param_var.pc_ota_id_differ_detail_no_list_net_rate.series_type,
+				barWidth: '50%',
+                data: in_param_var.pc_ota_id_differ_detail_no_list_net_rate.series_data
+            }]
+        };
+		
+		
+		
+		// 图表数据 pc_ota_id_differ_list_detail_net_rate
+        var pc_ota_id_differ_list_detail_net_rate = {
+		    color: [in_param_var.pc_ota_id_differ_list_detail_net_rate.color],
+            title: {
+                text: in_param_var.pc_ota_id_differ_list_detail_net_rate.title_text
+            },
+            tooltip: {
+			    trigger: 'axis',
+				axisPointer : {
+				    type : 'shadow'
+                }				
+			},
+            legend: {
+                data: in_param_var.pc_ota_id_differ_list_detail_net_rate.legend_data
+            },
+            xAxis: {
+                data: in_param_var.pc_ota_id_differ_list_detail_net_rate.xAxis_data
+            },
+            yAxis: {},
+            series: [{
+                name: in_param_var.pc_ota_id_differ_list_detail_net_rate.series_name,
+                type: in_param_var.pc_ota_id_differ_list_detail_net_rate.series_type,
+				barWidth: '50%',
+                data: in_param_var.pc_ota_id_differ_list_detail_net_rate.series_data
+            }]
+        };
+		
+		
+		
+		// 图表数据 pc_ota_id_same_net_rate
+        var pc_ota_id_same_net_rate = {
+		    color: [in_param_var.pc_ota_id_same_net_rate.color],
+            title: {
+                text: in_param_var.pc_ota_id_same_net_rate.title_text
+            },
+            tooltip: {
+			    trigger: 'axis',
+				axisPointer : {
+				    type : 'shadow'
+                }				
+			},
+            legend: {
+                data: in_param_var.pc_ota_id_same_net_rate.legend_data
+            },
+            xAxis: {
+                data: in_param_var.pc_ota_id_same_net_rate.xAxis_data
+            },
+            yAxis: {},
+            series: [{
+                name: in_param_var.pc_ota_id_same_net_rate.series_name,
+                type: in_param_var.pc_ota_id_same_net_rate.series_type,
+				barWidth: '50%',
+                data: in_param_var.pc_ota_id_same_net_rate.series_data
+            }]
+        };
+	
+	    total_data_myChart.setOption(total);
+        spider_rate_data_myChart.setOption(spider_rate);		
+        list_null_net_rate_data_myChart.setOption(list_null_net_rate);
+		list_no_null_detail_null_net_rate_data_myChart.setOption(list_no_null_detail_null_net_rate);
+		pnc_ota_id_same_net_rate_data_myChart.setOption(pnc_ota_id_same_net_rate);
+		pnc_ota_id_differ_net_rate_data_myChart.setOption(pnc_ota_id_differ_net_rate);
+		pc_ota_id_differ_list_no_detail_net_rate_data_myChart.setOption(pc_ota_id_differ_list_no_detail_net_rate);
+		pc_ota_id_differ_detail_no_list_net_rate_data_myChart.setOption(pc_ota_id_differ_detail_no_list_net_rate);
+		pc_ota_id_differ_list_detail_net_rate_data_myChart.setOption(pc_ota_id_differ_list_detail_net_rate);
+		pc_ota_id_same_net_rate_data_myChart.setOption(pc_ota_id_same_net_rate);
+
+        </script>
+		{% endif %}
+		{% if result %}
+		<table class="result_table" border="3">
+		    <tr class="heading">
+		      <th>log_day</th>
+			  <th>total</th>
+			  <th>spider</th>
+			  <!--<th>list_null</th>
+			  <th>list_no_null_detail_null</th>
+			  <th>pnc_ota_id_same</th>
+			  <th>pnc_ota_id_differ</th>
+			  <th>pc_ota_id_same</th>
+			  <th>pc_ota_id_differ_list_no_detail</th>
+			  <th>pc_ota_id_differ_detail_no_list</th>
+			  <th>pc_ota_id_differ_list_detail</th>
+			  <th>net_total</th>
+			  <th>list_null_rate</th>-->
+			  <th>spider_rate</th>
+			  <th>list_null_net_rate</th>
+			  <!--<th>list_no_null_detail_null_rate</th>-->
+			  <th>list_no_null_detail_null_net_rate</th>
+			  <!--<th>pnc_ota_id_same_rate</th>-->
+			  <th>pnc_ota_id_same_net_rate</th>
+			  <!--<th>pnc_ota_id_differ_rate</th>-->
+			  <th>pnc_ota_id_differ_net_rate</th>
+			  <!--<th>pc_ota_id_differ_list_no_detail_rate</th>-->
+			  <th>pc_ota_id_differ_list_no_detail_net_rate</th>
+			  <!--<th>pc_ota_id_differ_detail_no_list_rate</th>-->
+			  <th>pc_ota_id_differ_detail_no_list_net_rate</th>
+			  <!--<th>pc_ota_id_differ_list_detail_rate</th>-->
+			  <th>pc_ota_id_differ_list_detail_net_rate</th>
+			  <!--<th>pc_ota_id_same_rate</th>-->
+			  <th>pc_ota_id_same_net_rate</th>
+			</tr>
+			{% for r in result %}
+			{% if loop.index % 2 == 0 %}
+			<tr class="odd">
+			    <td width="50">{{r[0]}}</td>
+				<td width="50">{{r[1]}}</td>
+				<td width="50">{{r[2]}}</td>
+				<!--<td width="50">{{r[3]}}</td>
+				<td width="50">{{r[4]}}</td>
+				<td width="50">{{r[5]}}</td>
+				<td width="50">{{r[6]}}</td>
+				<td width="50">{{r[7]}}</td>
+				<td width="50">{{r[8]}}</td>
+				<td width="50">{{r[9]}}</td>
+				<td width="50">{{r[10]}}</td>	
+				<td width="50">{{r[12]}}</td>
+				<td width="50">{{r[13]}}</td>-->
+				<td width="50">{{r[11]}}</td>
+				<td width="50">{{r[14]}}</td>
+				<!--<td width="50">{{r[15]}}</td>-->
+				<td width="50">{{r[16]}}</td>
+				<!--<td width="50">{{r[17]}}</td>-->
+				<td width="50">{{r[18]}}</td>
+				<!--<td width="50">{{r[19]}}</td>-->
+				<td width="50">{{r[20]}}</td>
+				<!--<td width="50">{{r[21]}}</td>-->
+				<td width="50">{{r[22]}}</td>
+				<!--<td width="50">{{r[23]}}</td>-->
+				<td width="50">{{r[24]}}</td>
+				<!--<td width="50">{{r[25]}}</td>-->
+				<td width="50">{{r[26]}}</td>
+				<!--<td width="50">{{r[27]}}</td>-->
+				<td width="50">{{r[28]}}</td>
+			</tr>
+			{% else %}
+			<tr class="even">
+			    <td width="50">{{r[0]}}</td>
+				<td width="50">{{r[1]}}</td>
+				<td width="50">{{r[2]}}</td>
+				<!--<td width="50">{{r[3]}}</td>
+				<td width="50">{{r[4]}}</td>
+				<td width="50">{{r[5]}}</td>
+				<td width="50">{{r[6]}}</td>
+				<td width="50">{{r[7]}}</td>
+				<td width="50">{{r[8]}}</td>
+				<td width="50">{{r[9]}}</td>
+				<td width="50">{{r[10]}}</td>
+				<td width="50">{{r[12]}}</td>
+				<td width="50">{{r[13]}}</td>-->
+				<td width="50">{{r[11]}}</td>
+				<td width="50">{{r[14]}}</td>
+				<!--<td width="50">{{r[15]}}</td>-->
+				<td width="50">{{r[16]}}</td>
+				<!--<td width="50">{{r[17]}}</td>-->
+				<td width="50">{{r[18]}}</td>
+				<!--<td width="50">{{r[19]}}</td>-->
+				<td width="50">{{r[20]}}</td>
+				<!--<td width="50">{{r[21]}}</td>-->
+				<td width="50">{{r[22]}}</td>
+				<!--<td width="50">{{r[23]}}</td>-->
+				<td width="50">{{r[24]}}</td>
+				<!--<td width="50">{{r[25]}}</td>-->
+				<td width="50">{{r[26]}}</td>
+				<!--<td width="50">{{r[27]}}</td>-->
+				<td width="50">{{r[28]}}</td>
+			</tr>
+			{% endif %}
+			{% endfor %}
+		</table>
+	   {% endif %}
+
+    </form>
+    </div>
+</div>
+</body>
+</html>

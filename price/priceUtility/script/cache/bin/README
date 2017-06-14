@@ -1,0 +1,5 @@
+二进制编译环境的路径：
+../../../third_party/redis/examples <-- listKey listValue
+../../../third_party/redis_pb/bin/detailValue <-- detailValue
+../../../third_party/utility/src/main.cpp <-- detailKey
+../../../third_party/redis/examples/lruQueue.cpp   <-- lruQueue

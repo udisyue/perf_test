@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>列表页有价率指标</title>
+    <script type="text/javascript" src="static/My97DatePicker/WdatePicker.js"></script>
+    <!-- bootstrap -->
+    <link rel="stylesheet" type="text/css" href="static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="static/css/base.css">
+    <script src="static/jquery/jquery.js"></script>
+    <script src="static/bootstrap/js/bootstrap.min.js"></script>
+	<script src="{{ url_for('static', filename='echarts.js')}}"></script>
+</head>
+</head>
+<style type="text/css">
+
+#showResult { width:100%; height:500px;}
+
+.query_table { width:60%;}
+.query_table tr th { padding:10px; text-align:right; }
+.query_table tr td { padding:10px; }
+
+.result_table { width:100%; height:50px;bolder-collapse:collapse;}
+.result_table th td { bolder:3 solid;}
+.heading{background-color:#BEBEBE;}
+.odd {background-color:#F0F0F0;}
+.even{background-color:#FFFFFF;}
+
+.query_title { 
+    text-align:center; 
+	padding:10px; 
+	font-size:20px; 
+	font-weigh:blod; 
+}
+
+.cities { background-color:Honeydew;}
+
+</style>
+
+<body>
+
+<nav class="navbar navbar-default navbar-static-top" role="navigation">
+<div class="navbar-header">
+  <a class="navbar-brand" href="#">列表页有价率指标</a>
+</div>
+</nav>
+<div id="main-container" style="padding-left:15px;padding-right:15px;">
+
+    <form id="queryformdata" action="" method="post" class="form-inline" role="form">
+    <div class="cities">
+            <div id="result">			
+				<!--Server-->
+				<table class="query_table" style="with:100%">
+					<tr>
+						<th>beginTime：</th>
+						<td><input type="text" name="beginTime" onclick="WdatePicker()" value={{req.begin_time}} /></td>
+						<th>endTime：</th>
+						<td><input type="text" name="endTime" onclick="WdatePicker()" value={{req.end_time}} /></td>
+						<th></th>
+						<td><button type="submit" class="form-control" style="background:red;color:white">Search</button></td>
+					</tr>					
+				</table>
+            </div>
+        </div>
+		<hr />
+		
+		{% if result %}
+		<table class="result_table" border="3">
+		    <tr class="heading">
+		      <th>日期</th>
+			  <th>有价率</th>
+			  <th>有价率1</th>
+			  <th>有价率2</th>
+			  <th>有价率3</th>
+			  <th>有价率4</th>
+			  <th>有价率5</th>
+			  <th>有价率6</th>
+			  <th>有价率7</th>
+			  <th>有价率8</th>
+			  <th>有价率9</th>
+			  <th>有价率10</th>
+			  <th>有价率11</th>
+			  <th>有价率12</th>
+			</tr>
+			{% for r in result %}
+			{% if loop.index % 2 == 0 %}
+			<tr class="odd">
+			    <td width="60">{{r[0]}}</td>
+				<td width="60">{{r[1]}}</td>
+				<td width="60">{{r[2]}}</td>
+				<td width="60">{{r[3]}}</td>
+				<td width="60">{{r[4]}}</td>
+				<td width="60">{{r[5]}}</td>
+				<td width="60">{{r[6]}}</td>
+				<td width="60">{{r[7]}}</td>
+				<td width="60">{{r[8]}}</td>
+				<td width="60">{{r[9]}}</td>
+				<td width="60">{{r[10]}}</td>
+				<td width="60">{{r[11]}}</td>
+				<td width="60">{{r[12]}}</td>
+				<td width="60">{{r[13]}}</td>
+			</tr>
+			{% else %}
+			<tr class="even">
+			    <td width="60">{{r[0]}}</td>
+				<td width="60">{{r[1]}}</td>
+				<td width="60">{{r[2]}}</td>
+				<td width="60">{{r[3]}}</td>
+				<td width="60">{{r[4]}}</td>
+				<td width="60">{{r[5]}}</td>
+				<td width="60">{{r[6]}}</td>
+				<td width="60">{{r[7]}}</td>
+				<td width="60">{{r[8]}}</td>
+				<td width="60">{{r[9]}}</td>
+				<td width="60">{{r[10]}}</td>
+				<td width="60">{{r[11]}}</td>
+				<td width="60">{{r[12]}}</td>
+				<td width="60">{{r[13]}}</td>
+			</tr>
+			{% endif %}
+			{% endfor %}
+		</table>
+	   {% endif %}
+
+    </form>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,25 @@
+Serving HTTP on 0.0.0.0 port 6060 ...
+Traceback (most recent call last):
+  File "/usr/lib64/python2.6/runpy.py", line 122, in _run_module_as_main
+    "__main__", fname, loader, pkg_name)
+  File "/usr/lib64/python2.6/runpy.py", line 34, in _run_code
+    exec code in run_globals
+  File "/usr/lib64/python2.6/SimpleHTTPServer.py", line 220, in <module>
+    test()
+  File "/usr/lib64/python2.6/SimpleHTTPServer.py", line 216, in test
+    BaseHTTPServer.test(HandlerClass, ServerClass)
+  File "/usr/lib64/python2.6/BaseHTTPServer.py", line 588, in test
+    httpd.serve_forever()
+  File "/usr/lib64/python2.6/SocketServer.py", line 224, in serve_forever
+    r, w, e = select.select([self], [], [], poll_interval)
+KeyboardInterrupt
+10.25.254.43 - - [23/May/2017 16:55:43] "GET / HTTP/1.1" 200 -
+10.25.254.43 - - [23/May/2017 16:55:44] code 404, message File not found
+10.25.254.43 - - [23/May/2017 16:55:44] "GET /favicon.ico HTTP/1.1" 404 -
+10.25.254.43 - - [23/May/2017 16:55:50] "GET /results/ HTTP/1.1" 200 -
+10.25.254.43 - - [23/May/2017 16:55:58] "GET /results/results_2017.05.23_16.48.24/ HTTP/1.1" 200 -
+10.25.254.43 - - [23/May/2017 16:56:02] "GET /results/results_2017.05.23_16.48.24/results.html HTTP/1.1" 200 -
+10.25.254.43 - - [23/May/2017 16:56:02] "GET /results/results_2017.05.23_16.48.24/All_Transactions_response_times_intervals.png HTTP/1.1" 200 -
+10.25.254.43 - - [23/May/2017 16:56:02] "GET /results/results_2017.05.23_16.48.24/All_Transactions_response_times.png HTTP/1.1" 200 -
+10.25.254.43 - - [23/May/2017 16:56:02] "GET /results/results_2017.05.23_16.48.24/All_Transactions_throughput.png HTTP/1.1" 200 -
+10.25.254.43 - - [23/May/2017 17:27:34] "GET /results/ HTTP/1.1" 200 -

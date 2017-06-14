@@ -1,0 +1,3 @@
+#!/bin/bash
+
+multimech-run ps_stress_test
